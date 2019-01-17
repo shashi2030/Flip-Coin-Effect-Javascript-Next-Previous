@@ -1,0 +1,288 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+.container{
+	width:500px;
+	margin:0 auto;
+}
+.button-row{
+	text-align:center;
+}
+button{
+	background:#1059d3;
+	color:#fff;
+	border-radius:5px;	
+	padding:5px 20px;
+	border:none;
+}
+.flip-container {
+	margin:0 auto;
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -o-perspective: 1000;
+  perspective: 1000;
+
+	border-color:#ffffff!important;
+}
+
+	.flip .flipper {
+		-webkit-transform: rotateY(180deg);
+		-moz-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+		transform: rotateY(180deg);
+	}
+.flip-container{
+	width: 220px;
+	height: 220px;
+	}
+.front, .back {
+	width: 200px;
+	height: 200px;
+	border-radius:50%;
+	overflow:hidden;
+	border:solid 5px #cecece;
+}
+
+.flipper {
+	
+	-webkit-transform-style: preserve-3d;
+
+	
+	-moz-transform-style: preserve-3d;
+  
+  
+	-o-transform-style: preserve-3d;
+
+	
+	transform-style: preserve-3d;
+
+	position: relative;
+}
+
+.front, .back {
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+	backface-visibility: hidden;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.front {
+	z-index: 2;
+}
+
+.back {
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+	transform: rotateY(180deg);
+
+	background: #f8f8f8;
+}
+
+.front .name {
+	font-size: 2em;
+	display: inline-block;
+	background: rgba(33, 33, 33, 0.9);
+	color: #f8f8f8;
+	font-family: Courier;
+	padding: 5px 10px;
+	border-radius: 5px;
+	bottom: 60px;
+	left: 25%;
+	position: absolute;
+	text-shadow: 0.1em 0.1em 0.05em #333;
+
+	-webkit-transform: rotate(-20deg);
+	-moz-transform: rotate(-20deg);
+  -o-transform: rotate(-20deg);
+	transform: rotate(-20deg);
+}
+
+.back-logo {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	border-radius:50%;
+	width: 200px;
+	height: 200px;
+}
+
+.back-title {
+	font-weight: bold;
+	color: #00304a;
+	position: absolute;
+	top: 180px;
+	left: 0;
+	right: 0;
+	text-align: center;
+	text-shadow: 0.1em 0.1em 0.05em #acd7e5;
+	font-family: Courier;
+	font-size: 2em;
+}
+
+.back p {
+	position: absolute;
+	bottom: 40px;
+	left: 0;
+	right: 0;
+	text-align: center;
+	padding: 0 20px;
+  font-family: arial;
+  line-height: 2em;
+}
+</style>
+</head>
+<body>
+<div class="container">
+	<div class="flip-container">
+	  <div class="flipper" id="flipper">
+		<div class="front">
+		  <img src="" id="front">
+		</div>
+		<div class="back">
+		  <div class="back-logo">
+			<img src="" id="back" />
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<div class="button-row">
+		<button onclick="flip.prev()">Prev</button>
+		<button onclick="flip.next();">Next</button>
+	</div>
+</div>
+<script>
+var gallery = function(){
+	var flipper = null;
+	var rotateVale = 180;
+	var maxRotate = 360;
+	var currentRotate = 0;
+	var currentflipvalue = 0;
+	var test = 1;
+	var images = ['poster-1.jpg','poster-2.jpg','poster-3.jpg','poster-4.jpg','poster-5.jpg','poster-6.jpg','poster-7.jpg','poster-8.jpg','poster-9.jpg','poster-10.jpg']
+	var imagepath = 'poster/';
+	var imageId = ['front','back'];
+	var imageIdValue = 1;
+	var imagesPos = 0;
+	
+	this.init = function(){
+		flipper = document.getElementById('flipper');
+		this.loadImage();
+	}
+	
+	
+	this.loadImage = function(){
+		document.getElementById(imageId[0]).src = imagepath + images[imagesPos];
+		imagesPos++;
+		document.getElementById(imageId[1]).src = imagepath + images[imagesPos];
+	}
+	
+	
+	
+	this.next = function(){
+		if(test){
+			currentRotate = currentRotate + rotateVale;
+			flipper.style.transitionDuration = ".3s";
+			flipper.style.webkitTransform = "rotateY("+currentRotate+"deg)";
+			
+			test = 0;
+		}
+		var transitionEvent = this.whichTransitionEvent();				
+		flipper.addEventListener(transitionEvent, transitionEndCallback);
+
+		function transitionEndCallback(event) {
+			flipper.removeEventListener(transitionEvent, transitionEndCallback);
+			test = 1;			
+			imagesPos++;
+			if(imagesPos >= images.length){
+				imagesPos = 0;
+			} 
+			document.getElementById(imageId[currentflipvalue]).src = imagepath + images[imagesPos];						
+			currentflipvalue++;
+			
+			if(currentflipvalue == 2){
+				currentflipvalue = 0;
+			}
+			if(currentRotate >=  maxRotate){			
+				flipper.style.transitionDuration = "0s";
+				flipper.style.webkitTransform = "rotateY("+0+"deg)";
+				currentRotate = 0;				
+			}
+		}
+	}
+	
+	
+	this.prev = function(){
+		
+		if(test){
+			
+			currentRotate = currentRotate - rotateVale;
+			flipper.style.transitionDuration = ".3s";
+			flipper.style.webkitTransform = "rotateY("+currentRotate+"deg)";
+			
+			test = 0;
+			
+			
+		}
+		var transitionEvent = this.whichTransitionEvent();				
+		flipper.addEventListener(transitionEvent, transitionEndCallback);
+
+		function transitionEndCallback(event) {
+			flipper.removeEventListener(transitionEvent, transitionEndCallback);
+			test = 1;			
+			imagesPos--;
+			if(imagesPos <= 0){
+				imagesPos = (images.length-1);
+			} 
+			//console.log(imagesPos);
+			
+			
+			
+			document.getElementById(imageId[currentflipvalue]).src = imagepath + images[imagesPos];						
+			
+			currentflipvalue++;
+			console.log(currentflipvalue);
+			if(currentflipvalue == 2){
+				currentflipvalue = 0;
+			}
+			
+			if(currentRotate ==  -maxRotate){			
+				flipper.style.transitionDuration = "0s";
+				flipper.style.webkitTransform = "rotateY("+0+"deg)";
+				currentRotate = 0;				
+			}
+		}
+	}
+	
+	
+	
+	/* transition events */				
+	this.whichTransitionEvent = function(){
+		var t,
+			el = document.createElement("fakeelement");
+		var transitions = {
+			"transition"      : "transitionend",
+			"OTransition"     : "oTransitionEnd",
+			"MozTransition"   : "transitionend",
+			"WebkitTransition": "webkitTransitionEnd"
+		}
+		for (t in transitions){
+			if (el.style[t] !== undefined){
+				return transitions[t];
+			}
+		}
+	}
+	
+	
+}
+
+var flip = new gallery();
+flip.init();
+</script>
+</body>
+</html>
